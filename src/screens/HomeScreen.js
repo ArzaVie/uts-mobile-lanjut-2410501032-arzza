@@ -1,10 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   StyleSheet, Text, View, FlatList, 
-  ActivityIndicator, RefreshControl, TouchableOpacity 
+  ActivityIndicator, RefreshControl, TouchableOpacity,
+  Image, Dimensions
 } from 'react-native';
 import { searchBooks } from '../api/openLibraryClient';
-import { colors } from '../theme/colors'; // Palet warna andalan kita
+import { colors } from '../theme/colors';
+import BookCard from '../components/BookCard';
+
+// Ambil ukuran layar biar ukuran card-nya presisi dibagi 2 kolom
+const numColumns = 2;
+const screenWidth = Dimensions.get('window').width;
+const cardWidth = (screenWidth - 48) / numColumns; // 48 dari padding kiri-kanan dan jarak antar card
 
 const HomeScreen = ({ navigation }) => {
   const [books, setBooks] = useState([]);
@@ -12,11 +19,9 @@ const HomeScreen = ({ navigation }) => {
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Fungsi buat narik data
   const loadBooks = async () => {
     try {
       setError(null);
-      // Buat default tampilan home, kita cari buku tentang 'design' atau bebas
       const data = await searchBooks('design'); 
       setBooks(data);
     } catch (err) {
@@ -27,44 +32,51 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-  // Jalanin fungsi narik data pas pertama kali screen dibuka
   useEffect(() => {
     loadBooks();
   }, []);
 
-  // Logic buat pull-to-refresh (Requirement C.4)
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     loadBooks();
   }, []);
 
-  // Komponen kecil buat nampilin tiap item buku
-  const renderBookItem = ({ item }) => (
-    // Nanti kalau di-klik bakal pindah ke DetailScreen bawa data bukunya
-    <TouchableOpacity 
-      style={styles.card}
-      onPress={() => navigation.navigate('Detail', { book: item })}
-    >
-      <Text style={styles.title} numberOfLines={2}>
-        {item.title}
-      </Text>
-      <Text style={styles.author}>
-        {item.author_name ? item.author_name[0] : 'Penulis Tidak Diketahui'}
-      </Text>
-    </TouchableOpacity>
-  );
+  const renderBookItem = ({ item }) => {
+    return (
+      <BookCard 
+        book={item} 
+        onPress={() => navigation.navigate('Detail', { book: item })}
+      />
+    );
+      <TouchableOpacity 
+        style={[styles.card, { width: cardWidth }]}
+        onPress={() => navigation.navigate('Detail', { book: item })}
+      >
+        <Image 
+          source={{ uri: coverUrl }} 
+          style={styles.coverImage} 
+          resizeMode="cover" // Biar gambarnya proporsional memenuhi kotak
+        />
+        <View style={styles.cardContent}>
+          <Text style={styles.title} numberOfLines={2}>
+            {item.title}
+          </Text>
+          <Text style={styles.author} numberOfLines={1}>
+            {item.author_name ? item.author_name[0] : 'Anonim'}
+          </Text>
+        </View>
+      </TouchableOpacity>
+  };
 
-  // Requirement C.1: Loading Indicator
   if (loading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={{ marginTop: 10 }}>Memuat buku...</Text>
+        <Text style={{ marginTop: 10 }}>Menyusun rak buku...</Text>
       </View>
     );
   }
 
-  // Requirement C.1: Error Handling
   if (error) {
     return (
       <View style={styles.center}>
@@ -82,13 +94,14 @@ const HomeScreen = ({ navigation }) => {
         data={books}
         keyExtractor={(item) => item.key}
         renderItem={renderBookItem}
-        contentContainerStyle={{ padding: 16 }}
-        // Requirement C.4: Pull-to-refresh
+        numColumns={numColumns} // Ini yang bikin layoutnya jadi grid 2 kolom
+        contentContainerStyle={styles.listContainer}
+        columnWrapperStyle={styles.columnWrapper} // Biar jarak antar kolom seimbang
         refreshControl={
           <RefreshControl 
             refreshing={refreshing} 
             onRefresh={onRefresh}
-            colors={[colors.primary]} // Warna spinner loadingnya
+            colors={[colors.primary]} 
           />
         }
       />
@@ -109,26 +122,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
+  listContainer: {
+    padding: 16,
+  },
+  columnWrapper: {
+    justifyContent: 'space-between',
+    marginBottom: 16, // Jarak baris atas dan bawah
+  },
   card: {
     backgroundColor: '#FFF',
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.primary, // Aksen Emerald Pine di pinggir card
-    elevation: 2, // Shadow tipis buat Android
-    shadowColor: '#000', // Shadow buat iOS
+    borderRadius: 12,
+    overflow: 'hidden', // Biar sudut gambar ikut melengkung ngikutin card
+    elevation: 4, 
+    shadowColor: '#000', 
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  coverImage: {
+    width: '100%',
+    height: 180, // Tinggi cover bukunya
+    backgroundColor: '#E2E8F0', // Warna background sementara pas gambar lagi loading
+  },
+  cardContent: {
+    padding: 12,
+    borderTopWidth: 2,
+    borderTopColor: colors.accent, // Aksen garis Champagne Gold misahin gambar & teks
   },
   title: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: colors.text,
     marginBottom: 4,
+    minHeight: 40, // Biar judul yang panjang/pendek tinggi card-nya tetep sama
   },
   author: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.inactive,
   },
   errorText: {

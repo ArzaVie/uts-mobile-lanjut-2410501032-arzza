@@ -7,6 +7,7 @@ import {
 import { searchBooks } from '../api/openLibraryClient';
 import { colors } from '../theme/colors';
 import BookCard from '../components/BookCard';
+import { getTrendingBooks } from '../api/openLibraryClient';
 
 // Ambil ukuran layar biar ukuran card-nya presisi dibagi 2 kolom
 const numColumns = 2;
@@ -22,7 +23,7 @@ const HomeScreen = ({ navigation }) => {
   const loadBooks = async () => {
     try {
       setError(null);
-      const data = await searchBooks('design'); 
+      const data = await getTrendingBooks();
       setBooks(data);
     } catch (err) {
       setError(err.message);

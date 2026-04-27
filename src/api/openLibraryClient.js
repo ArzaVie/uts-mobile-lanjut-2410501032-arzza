@@ -1,18 +1,31 @@
 import axios from 'axios';
 
-// Bikin instance axios biar gampang kalau mau ditambahin config lain
 const apiClient = axios.create({
   baseURL: 'https://openlibrary.org',
-  timeout: 10000, // Timeout 10 detik biar kalau inet lemot langsung masuk ke error handling
+  // NAIKKIN TIMEOUT JADI 30 DETIK (30000 ms) biar sabar nungguin API gratisan
+  timeout: 30000, 
 });
 
 export const searchBooks = async (query = 'technology') => {
   try {
-    // Panggil endpoint search dari openlibrary, limit 10 aja dulu biar ringan
     const response = await apiClient.get(`/search.json?q=${query}&limit=10`);
     return response.data.docs;
   } catch (error) {
-    // Lempar error biar ditangkap sama komponen HomeScreen
-    throw new Error('Gagal mengambil data buku. Cek koneksi internet lu.');
+    throw new Error('Gagal memuat data');
+  }
+};
+
+export const getTrendingBooks = async () => {
+  try {
+    console.log("Mencoba fetch API Trending..."); // Buat ngecek di terminal
+    const response = await apiClient.get('/trending/daily.json?limit=10');
+    console.log("Berhasil dapat data! Jumlah buku:", response.data.works?.length); // Buat mastiin datanya ada
+    return response.data.works; 
+  } catch (error) {
+    // INI PENTING: Biar lu bisa liat error aslinya di terminal VSCode/CMD lu
+    console.error("Ini error aslinya Bang:", error.message); 
+    
+    // Tapi yang ditampilin ke dosen di layar HP tetep "Gagal memuat data"
+    throw new Error('Gagal memuat data'); 
   }
 };

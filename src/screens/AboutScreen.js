@@ -1,31 +1,99 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { useFavoriteStore } from '../store/useFavoriteStore'; // Ambil data favorit buat statistik
 import { colors } from '../theme/colors';
 
 const AboutScreen = () => {
+  const navigation = useNavigation();
+  
+  // Ambil jumlah buku favorit betulan dari Zustand
+  const totalFavorites = useFavoriteStore((state) => state.favorites.length);
+
+  // Fungsi buat menu dummy (Catatan & Highlight)
+  const handleDummyPress = () => {
+    Alert.alert("Fitur Segera Hadir", "Fitur Catatan & Highlight akan tersedia di versi berikutnya.");
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.profileCard}>
-        {/* Placeholder Foto Profil - Nanti lu bisa ganti require('./path-ke-foto-lu.jpg') */}
+    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+      
+      {/* 1. INFORMASI DASAR PENGGUNA */}
+      <View style={styles.header}>
         <Image 
-          source={{ uri: 'https://via.placeholder.com/150' }} 
+          source={{ uri: '#' }} // Ganti pakai foto lu
           style={styles.avatar} 
         />
         <Text style={styles.name}>Arzza Munabim</Text>
-        <Text style={styles.nim}>NIM: 2410501032</Text>
-        
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>Kelas: D3 Sistem Informasi (Angkatan 2024)</Text>
-          <Text style={styles.infoText}>Kampus: UPN "Veteran" Jakarta</Text>
-          <Text style={styles.infoText}>Tema Project: Tema C - BookShelf</Text>
+        <Text style={styles.bio}>Mahasiswa • D3 Sistem Informasi</Text>
+        <Text style={styles.email}>2410501032@mahasiswa.upnvj.ac.id</Text>
+      </View>
+
+      {/* 2. AKTIVITAS & STATISTIK MEMBACA */}
+      <View style={styles.statsContainer}>
+        <View style={styles.statBox}>
+          <Text style={styles.statValue}>{totalFavorites}</Text>
+          <Text style={styles.statLabel}>Disimpan</Text>
+        </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statBox}>
+          <Text style={styles.statValue}>14j</Text>
+          <Text style={styles.statLabel}>Waktu Baca</Text>
+        </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statBox}>
+          <Text style={styles.statValue}>5/12</Text>
+          <Text style={styles.statLabel}>Target Buku</Text>
         </View>
       </View>
 
-      <View style={styles.creditCard}>
-        <Text style={styles.creditTitle}>Credit API</Text>
-        <Text style={styles.creditText}>
-          Aplikasi ini menggunakan layanan data publik dari Open Library API (https://openlibrary.org) untuk mengambil metadata dan sampul buku.
-        </Text>
+      <View style={styles.sectionContainer}>
+        
+        {/* 3. BOOKMARK, CATATAN & HIGHLIGHT */}
+        <Text style={styles.sectionTitle}>Perpustakaan Saya</Text>
+        
+        <TouchableOpacity 
+          style={styles.menuItem} 
+          onPress={() => navigation.navigate('Favorites')} // Beneran pindah ke halaman Favorit
+          activeOpacity={0.7}
+        >
+          <View style={styles.menuIconBox}>
+            <Feather name="bookmark" size={18} color={colors.surface} />
+          </View>
+          <Text style={styles.menuText}>Bookmark & Favorit</Text>
+          <Feather name="chevron-right" size={20} color={colors.inactive} />
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.menuItem} 
+          onPress={handleDummyPress} 
+          activeOpacity={0.7}
+        >
+          <View style={[styles.menuIconBox, { backgroundColor: '#F59E0B' }]}>
+            <Feather name="edit-3" size={18} color={colors.surface} />
+          </View>
+          <Text style={styles.menuText}>Catatan & Highlight</Text>
+          <Feather name="chevron-right" size={20} color={colors.inactive} />
+        </TouchableOpacity>
+
+        {/* 4. INFO AKADEMIK (WAJIB BUAT UTS) */}
+        <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Informasi Sistem (UTS)</Text>
+
+        <View style={styles.infoCard}>
+          <View style={styles.infoRow}>
+            <Feather name="box" size={16} color={colors.inactive} />
+            <Text style={styles.infoLabel}>Tema Project</Text>
+            <Text style={styles.infoValue}>Tema C - BookShelf</Text>
+          </View>
+          
+          <View style={[styles.infoRow, { borderBottomWidth: 0, paddingBottom: 0 }]}>
+            <Feather name="database" size={16} color={colors.inactive} />
+            <Text style={styles.infoLabel}>Credit API</Text>
+            <Text style={styles.infoValue}>openlibrary.org</Text>
+          </View>
+        </View>
+
       </View>
     </ScrollView>
   );
@@ -37,71 +105,133 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: colors.background,
-    padding: 20,
-    alignItems: 'center',
+    paddingBottom: 40,
   },
-  profileCard: {
-    width: '100%',
-    backgroundColor: '#FFF',
-    borderRadius: 16,
-    padding: 24,
+  header: {
     alignItems: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    marginBottom: 20,
-    borderTopWidth: 6,
-    borderTopColor: colors.primary,
+    paddingVertical: 32,
+    backgroundColor: colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
   avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     marginBottom: 16,
-    borderWidth: 3,
-    borderColor: colors.accent,
+    borderWidth: 2,
+    borderColor: colors.border,
   },
   name: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: colors.text,
     marginBottom: 4,
   },
-  nim: {
-    fontSize: 16,
+  bio: {
+    fontSize: 14,
     color: colors.primary,
     fontWeight: '600',
-    marginBottom: 16,
+    marginBottom: 4,
   },
-  infoBox: {
-    width: '100%',
-    backgroundColor: colors.background,
-    padding: 12,
-    borderRadius: 8,
+  email: {
+    fontSize: 13,
+    color: colors.inactive,
   },
-  infoText: {
+  statsContainer: {
+    flexDirection: 'row',
+    backgroundColor: colors.surface,
+    marginHorizontal: 16,
+    marginTop: -20,
+    borderRadius: 16,
+    paddingVertical: 16,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  statBox: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statValue: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.primary,
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: colors.inactive,
+    fontWeight: '500',
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: colors.border,
+    marginVertical: 4,
+  },
+  sectionContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 32,
+  },
+  sectionTitle: {
     fontSize: 14,
-    color: colors.text,
-    marginBottom: 6,
-    textAlign: 'center',
+    fontWeight: '700',
+    color: colors.inactive,
+    marginBottom: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  creditCard: {
-    width: '100%',
-    backgroundColor: '#FFF',
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    padding: 12,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  menuIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  menuText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  infoCard: {
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  creditTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginBottom: 8,
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 12,
+    marginBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
-  creditText: {
+  infoLabel: {
+    marginLeft: 8,
     fontSize: 14,
     color: colors.inactive,
-    lineHeight: 20,
-  }
+    flex: 1,
+  },
+  infoValue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.primary,
+  },
 });

@@ -1,75 +1,149 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { 
+  View, Text, StyleSheet, TouchableOpacity, ScrollView, 
+  Image, ActivityIndicator, Share 
+} from 'react-native';
+import axios from 'axios';
+import { Feather } from '@expo/vector-icons';
 import { useFavoriteStore } from '../store/useFavoriteStore';
 import { colors } from '../theme/colors';
 
-// Menerima 'route' buat ngambil params yang dikirim dari HomeScreen
 const DetailScreen = ({ route }) => {
-  // Tangkap data buku
+  // Tangkap data awal buku dari HomeScreen
   const { book } = route.params; 
   
-  // Panggil state dan action dari Zustand
+  // State buat nyimpen deskripsi dari API /works
+  const [description, setDescription] = useState('');
+  const [loadingDesc, setLoadingDesc] = useState(true);
+
   const favorites = useFavoriteStore((state) => state.favorites);
   const addFavorite = useFavoriteStore((state) => state.addFavorite);
   const removeFavorite = useFavoriteStore((state) => state.removeFavorite);
 
-  // Logic: Cek apakah buku ini udah ada di array favorites?
   const isFavorite = favorites.some((item) => item.key === book.key);
+
+  // Fungsi Fetching Deskripsi (Memenuhi Requirement PDF endpoint /works/<id>.json)
+  useEffect(() => {
+    const fetchBookDetails = async () => {
+      try {
+        // book.key biasanya udah berbentuk "/works/OLXXXXXW"
+        const response = await axios.get(`https://openlibrary.org${book.key}.json`);
+        const descData = response.data.description;
+        
+        // OpenLibrary kadang nyimpen deskripsi dalam bentuk string langsung, kadang dalam object { value: '...' }
+        if (typeof descData === 'string') {
+          setDescription(descData);
+        } else if (descData && descData.value) {
+          setDescription(descData.value);
+        } else {
+          setDescription('Deskripsi tidak tersedia untuk buku ini.');
+        }
+      } catch (error) {
+        setDescription('Gagal memuat deskripsi.');
+      } finally {
+        setLoadingDesc(false);
+      }
+    };
+
+    fetchBookDetails();
+  }, [book.key]);
 
   const toggleFavorite = () => {
     if (isFavorite) {
-      removeFavorite(book.key); // Kalau udah favorit, tombolnya jadi hapus
+      removeFavorite(book.key);
     } else {
-      addFavorite(book); // Kalau belum, tambahin ke favorit
+      addFavorite(book);
     }
   };
 
+  // Fitur tambahan: Bagikan Buku
+  const shareBook = async () => {
+    try {
+      await Share.share({
+        message: `Cek buku keren ini: ${book.title} karya ${book.author_name ? book.author_name[0] : 'Anonim'}. Temukan di aplikasi BookShelf!`,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  // Siapin URL Cover resolusi L (Large)
+  const coverUrl = book.cover_i 
+    ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg` 
+    : 'https://via.placeholder.com/300x450.png?text=No+Cover';
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.card}>
-        {/* Field 1: Judul Utama */}
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
+      
+      {/* 1. INFORMASI UTAMA & SAMPUL */}
+      <View style={styles.headerSection}>
+        <Image source={{ uri: coverUrl }} style={styles.coverImage} resizeMode="cover" />
         <Text style={styles.title}>{book.title}</Text>
+        <Text style={styles.author}>{book.author_name ? book.author_name.join(', ') : 'Penulis Tidak Diketahui'}</Text>
+      </View>
+
+      {/* 5. TINDAKAN (ACTIONS) */}
+      <View style={styles.actionSection}>
+        <TouchableOpacity 
+          style={[styles.actionButton, isFavorite && styles.actionButtonActive]} 
+          onPress={toggleFavorite}
+          activeOpacity={0.8}
+        >
+          <Feather name="heart" size={20} color={isFavorite ? colors.surface : colors.primary} />
+          <Text style={[styles.actionText, isFavorite && styles.actionTextActive]}>
+            {isFavorite ? 'Favorit' : 'Tambah Favorit'}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.actionButton} onPress={shareBook} activeOpacity={0.8}>
+          <Feather name="share-2" size={20} color={colors.primary} />
+          <Text style={styles.actionText}>Bagikan</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.divider} />
+
+      {/* 2. DESKRIPSI BUKU */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Sinopsis</Text>
+        {loadingDesc ? (
+          <ActivityIndicator size="small" color={colors.primary} style={{ marginTop: 10, alignSelf: 'flex-start' }} />
+        ) : (
+          <Text style={styles.descriptionText}>{description}</Text>
+        )}
+      </View>
+
+      <View style={styles.divider} />
+
+      {/* 3. INFORMASI DETAIL (Identitas Tambahan) */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Informasi Buku</Text>
         
-        {/* Requirement C.1: Minimal 5 Field Informasi Tambahan */}
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>2. Penulis:</Text>
-          <Text style={styles.value}>
-            {book.author_name ? book.author_name.join(', ') : 'Tidak diketahui'}
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Tahun Terbit</Text>
+          <Text style={styles.infoValue}>{book.first_publish_year || 'Tidak diketahui'}</Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Penerbit</Text>
+          <Text style={styles.infoValue}>
+            {book.publisher ? book.publisher[0] : 'Tidak diketahui'}
           </Text>
         </View>
 
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>3. Tahun Terbit Pertama:</Text>
-          <Text style={styles.value}>{book.first_publish_year || '-'}</Text>
-        </View>
-
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>4. Jumlah Edisi:</Text>
-          <Text style={styles.value}>{book.edition_count || '-'}</Text>
-        </View>
-
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>5. Penerbit:</Text>
-          <Text style={styles.value}>
-            {book.publisher ? book.publisher[0] : '-'}
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>ISBN</Text>
+          <Text style={styles.infoValue}>
+            {book.isbn ? book.isbn[0] : 'Tidak tersedia'}
           </Text>
         </View>
 
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>6. ID Buku:</Text>
-          <Text style={styles.value}>{book.key}</Text>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Jumlah Edisi</Text>
+          <Text style={styles.infoValue}>{book.edition_count || '-'} edisi</Text>
         </View>
       </View>
 
-      {/* Tombol Tambah ke Favorit (Requirement C.1) */}
-      <TouchableOpacity 
-        style={[styles.button, isFavorite && styles.buttonRemove]} 
-        onPress={toggleFavorite}
-      >
-        <Text style={[styles.buttonText, isFavorite && styles.buttonTextRemove]}>
-          {isFavorite ? 'Hapus dari Favorit' : 'Tambah ke Favorit'}
-        </Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -79,64 +153,99 @@ export default DetailScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
-    padding: 16,
+    backgroundColor: colors.surface,
   },
-  card: {
-    backgroundColor: '#FFF',
-    padding: 20,
-    borderRadius: 12,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+  headerSection: {
+    alignItems: 'center',
+    padding: 24,
+    backgroundColor: colors.background,
+  },
+  coverImage: {
+    width: 160,
+    height: 240,
+    borderRadius: 8,
     marginBottom: 20,
-    borderTopWidth: 5,
-    borderTopColor: colors.primary, // Aksen Emerald Pine
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   title: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: '800',
+    color: colors.primary,
+    textAlign: 'center',
+    marginBottom: 8,
+    lineHeight: 28,
+  },
+  author: {
+    fontSize: 16,
+    color: colors.inactive,
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  actionSection: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingVertical: 20,
+    gap: 16, // Jarak antar tombol
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 30, // Bentuk pil ala modern UI
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  actionButtonActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  actionText: {
+    marginLeft: 8,
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  actionTextActive: {
+    color: colors.surface,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.border,
+    marginHorizontal: 24,
+  },
+  section: {
+    padding: 24,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
     color: colors.primary,
     marginBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
-    paddingBottom: 10,
   },
-  fieldContainer: {
+  descriptionText: {
+    fontSize: 15,
+    color: colors.text,
+    lineHeight: 24, // Jarak baca yang nyaman
+    textAlign: 'justify',
+  },
+  infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 12,
   },
-  label: {
+  infoLabel: {
     fontSize: 14,
     color: colors.inactive,
     flex: 1,
   },
-  value: {
+  infoValue: {
     fontSize: 14,
-    fontWeight: '500',
-    color: colors.text,
+    fontWeight: '600',
+    color: colors.primary,
     flex: 2,
     textAlign: 'right',
   },
-  button: {
-    backgroundColor: colors.primary,
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonRemove: {
-    backgroundColor: colors.accent, // Kalau udah favorit, warnanya jadi Champagne Gold
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  buttonText: {
-    color: colors.background,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  buttonTextRemove: {
-    color: colors.primary, // Teksnya balik jadi gelap biar kontras sama Champagne Gold
-  }
 });

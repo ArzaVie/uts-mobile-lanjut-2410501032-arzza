@@ -80,3 +80,4 @@ Pada proyek ini, saya memilih menggunakan **Zustand** sebagai *State Management*
 ---
 
 ## Refleksi
+Proyek UTS BookShelf ini memberikan banyak pelajaran teknis, terutama saat integrasi dengan *Open Library API* yang responsnya lambat dan memiliki struktur data inkonsisten (seperti data *cover* yang kosong atau format deskripsi yang berubah-ubah). Saya mengatasi *bug* tersebut dengan mengatur ulang *timeout* pada Axios menjadi 30 detik serta menggunakan *conditional rendering* dan gambar *placeholder*.

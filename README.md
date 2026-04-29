@@ -19,14 +19,7 @@ Aplikasi ini dibangun menggunakan ekosistem JavaScript modern:
 
 - **Framework**: [React Native 0.81](https://reactnative.dev/) ([Expo SDK 54](https://docs.expo.dev/))
 - **Core Library**: [React 19](https://react.dev/)
-- **Navigation**: [React Navigation 7](https://reactnavigation.org/) (Native Stack & Bottom Tabs)
-- **Animations**: [React Native Reanimated 4](https://docs.swmansion.com/react-native-reanimated/)
-- **UI Components**: Expo Linear Gradient (Visual Effects), Expo Blur (Glassmorphism)
-- **Icons**: Expo Vector Icons 15 (Feather, Ionicons)
-- **Styling**: StyleSheet API dengan sistem Dynamic Theme (Dark/Light Mode)
-- **Storage**: AsyncStorage 2.2.0 (Local Persistence)
-- **API**: [TVMaze API](https://www.tvmaze.com/api) (RESTful API)
-
+- **Navigation**: [React Navigation 7](https://reactnavigation.org/) (Native Stack & Bottom Tabs) 
 ---
 
 ## Cara Run Project

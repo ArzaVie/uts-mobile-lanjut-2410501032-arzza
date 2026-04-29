@@ -1,4 +1,4 @@
-# MovieDex - Project UTS Pemrograman Mobile Lanjut
+# BookShelf - Project UTS Pemrograman Mobile Lanjut
 
 **** adalah 
 

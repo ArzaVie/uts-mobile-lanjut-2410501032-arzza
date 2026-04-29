@@ -8,7 +8,7 @@ const cardWidth = (screenWidth - 48) / numColumns;
 
 const BookCard = ({ book, onPress, children }) => {
   const coverUrl = book.cover_i 
-    ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg` // Pake resolusi 'L' biar gambarnya lebih tajam
+    ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg` 
     : 'https://via.placeholder.com/150x220.png?text=No+Cover';
 
   return (
@@ -33,13 +33,12 @@ export default BookCard;
 
 const styles = StyleSheet.create({
   cardContainer: {
-    marginBottom: 20, // Jarak antar baris dibikin lebih lega (negative space)
+    marginBottom: 20, 
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 8, // Sudut lengkungnya disedikitkan biar kerasa tegas dan modern
+    borderRadius: 8, 
     overflow: 'hidden',
-    // Minimalist shadow: tipis banget cuma buat misahin dari background
     borderWidth: 1,
     borderColor: colors.border,
     elevation: 1, 
@@ -50,7 +49,7 @@ const styles = StyleSheet.create({
   },
   coverImage: {
     width: '100%',
-    height: 210, // Ditinggiin dikit biar fokusnya ada di artwork cover buku
+    height: 210, 
     backgroundColor: colors.border,
   },
   cardContent: {
@@ -59,16 +58,16 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontWeight: '700', // Teks dibikin lebih tebal (bold) biar kontras
+    fontWeight: '700', 
     color: colors.primary,
     marginBottom: 4,
     minHeight: 38,
-    lineHeight: 18, // Jarak antar baris teks
+    lineHeight: 18, //
   },
   author: {
     fontSize: 12,
     fontWeight: '500',
     color: colors.inactive,
-    letterSpacing: 0.3, // Dikasih jarak antar huruf dikit biar rapi
+    letterSpacing: 0.3, 
   },
 });

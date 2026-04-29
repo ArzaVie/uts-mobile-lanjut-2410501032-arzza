@@ -123,12 +123,14 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   name: {
+    fontFamily: 'Jakarta-Bold',
     fontSize: 22,
     fontWeight: '800',
     color: colors.text,
     marginBottom: 4,
   },
   bio: {
+    fontFamily: 'Jakarta-Medium',
     fontSize: 14,
     color: colors.primary,
     fontWeight: '600',

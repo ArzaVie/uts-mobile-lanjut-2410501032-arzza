@@ -1,9 +1,8 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Feather } from '@expo/vector-icons'; // Import icon Feather yang minimalis
+import { Feather } from '@expo/vector-icons'; 
 
-// Import Screens
 import HomeScreen from '../screens/HomeScreen';
 import DetailScreen from '../screens/DetailScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
@@ -22,7 +21,14 @@ const HomeStack = () => {
       screenOptions={{ 
         headerTintColor: colors.primary,
         headerStyle: { backgroundColor: colors.surface },
-        headerShadowVisible: false, 
+        headerShadowVisible: false, // Ngilangin bayangan bawaan header Stack
+        headerTitleAlign: 'center', // Bikin judul selalu di tengah
+        headerTitleStyle: {
+          fontFamily: 'Jakarta-SemiBold', // Pastikan font ini udah di-load di App.js
+          fontWeight: '700',
+          fontSize: 16, // Ukuran font dibikin lebih proporsional dan elegan
+          letterSpacing: 0.5,
+        }
       }}
     >
       <Stack.Screen name="HomeMain" component={HomeScreen} options={{ title: 'BookShelf' }} />
@@ -35,35 +41,27 @@ const HomeStack = () => {
 const AppNavigator = () => {
   return (
     <Tab.Navigator
-      // Kita pakai route buat ngecek lagi di tab mana buat nentuin icon-nya
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName;
+          if (route.name === 'Home') iconName = 'home';
+          else if (route.name === 'Search') iconName = 'search';
+          else if (route.name === 'Favorites') iconName = 'bookmark'; 
+          else if (route.name === 'About') iconName = 'user';
 
-          // Mapping nama tab dengan nama icon dari Feather
-          if (route.name === 'Home') {
-            iconName = 'home';
-          } else if (route.name === 'Search') {
-            iconName = 'search';
-          } else if (route.name === 'Favorites') {
-            iconName = 'heart'; // Pakai 'heart' atau bisa juga 'bookmark'
-          } else if (route.name === 'About') {
-            iconName = 'user';
-          }
-
-          // Render icon-nya di sini
           return <Feather name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: colors.primary, 
         tabBarInactiveTintColor: colors.inactive,
         tabBarStyle: {
+          fontFamily: 'Jakarta-Medium',
           backgroundColor: colors.surface, 
           borderTopWidth: 1,
           borderTopColor: colors.border, 
           elevation: 0, 
           shadowOpacity: 0, 
           paddingBottom: 5,
-          paddingTop: 5, // Tambahin padding atas dikit biar icon ga mepet
+          paddingTop: 5, 
           height: 60,
         },
         headerStyle: {
@@ -74,6 +72,13 @@ const AppNavigator = () => {
           borderBottomColor: colors.border, 
         },
         headerTintColor: colors.primary, 
+        headerTitleAlign: 'center', // Bikin judul Tab Bar selalu di tengah
+        headerTitleStyle: {
+          fontFamily: 'Jakarta-Bold',
+          fontWeight: '700',
+          fontSize: 16,
+          letterSpacing: 0.5,
+        }
       })}
     >
       <Tab.Screen 

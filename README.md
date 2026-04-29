@@ -55,13 +55,13 @@ Pastikan Anda sudah menginstall Node.js dan aplikasi Expo Go di smartphone.
 
 | Home                             | Detail Screen                        | Search                               | Favorites                           | Profile                             |
 | -------------------------------- | ------------------------------------ | ------------------------------------ | ----------------------------------- | ------------------------------------ |
-| ![Home](#home) | ![Detail](#detail) | ![Seacrh](#seacrh) | ![Fav](#favorite) | ![About](#profile) |
+| ![Home](./assets/home.jpeg) | ![Detail](./assets/detail.jpeg) | ![Seacrh](./assets/search.jpeg) | ![Fav](./assets/favorite.jpeg) | ![About](./assets/profile.jpeg) |
 
 ---
 
 ## Video Demo
 
-- [Klik di sini untuk menonton Video Demo Aplikasi (Youtube)]()
+- [Klik di sini untuk menonton Video Demo Aplikasi (Youtube)](https://youtu.be/cVIrBQA4HNU?si=yFR_T2PNt_WA59V6)
 ---
 
 ## Penjelasan State 

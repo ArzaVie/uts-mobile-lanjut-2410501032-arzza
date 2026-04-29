@@ -53,7 +53,7 @@ Pastikan Anda sudah menginstall Node.js dan aplikasi Expo Go di smartphone.
 
 ## Screenshots
 
-| Home                             | Detail Screen                        | Browse                               | Favorites                           | About Us                             |
+| Home                             | Detail Screen                        | Search                               | Favorites                           | Profile                             |
 | -------------------------------- | ------------------------------------ | ------------------------------------ | ----------------------------------- | ------------------------------------ |
 | ![Home](#home) | ![Detail](#detail) | ![Seacrh](#seacrh) | ![Fav](#favorite) | ![About](#profile) |
 

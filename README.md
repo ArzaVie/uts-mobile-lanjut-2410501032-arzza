@@ -36,6 +36,7 @@ Pastikan Anda sudah menginstall Node.js dan aplikasi Expo Go di smartphone.
 1.  **Clone Repository**
     ```bash
     git clone 
+    cd 
     
     ```
 2.  **Install Dependencies**
@@ -64,6 +65,7 @@ Pastikan Anda sudah menginstall Node.js dan aplikasi Expo Go di smartphone.
 ---
 
 ## Penjelasan State 
+Pada proyek ini, saya memilih menggunakan **Zustand** sebagai *State Management* utama untuk mengelola data Buku Favorit. Alasan utama pemilihan Zustand dibandingkan Redux Toolkit adalah ukuran *bundle*-nya yang jauh lebih ringan dan *boilerplate* kode yang sangat minim, sehingga mempercepat proses pengembangan aplikasi. Selain itu, Zustand memberikan fleksibilitas tinggi karena tidak membutuhkan konfigurasi pembungkus `<Provider>` yang rumit seperti Context API, yang sering kali memicu masalah *provider hell*. Dengan arsitektur ini, *store* Zustand dapat langsung diimpor dan digunakan secara praktis di berbagai layar. Sebagai contoh, *store* ini dipanggil di `DetailScreen` untuk memicu aksi penambahan buku, di `FavoritesScreen` untuk merender daftar buku yang tersimpan, dan di `AboutScreen` untuk menampilkan statistik jumlah buku favorit secara *real-time*. Dari segi performa, Zustand terbukti sangat efisien karena mampu menangani *re-rendering* komponen secara spesifik hanya pada bagian data yang mengalami perubahan, sehingga interaksi pengguna saat menambah atau menghapus buku dari daftar favorit tetap terasa mulus tanpa mengorbankan performa aplikasi.
 
 ---
 

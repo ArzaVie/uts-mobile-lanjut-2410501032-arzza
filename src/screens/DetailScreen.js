@@ -22,15 +22,12 @@ const DetailScreen = ({ route }) => {
 
   const isFavorite = favorites.some((item) => item.key === book.key);
 
-  // Fungsi Fetching Deskripsi (Memenuhi Requirement PDF endpoint /works/<id>.json)
   useEffect(() => {
     const fetchBookDetails = async () => {
       try {
-        // book.key biasanya udah berbentuk "/works/OLXXXXXW"
         const response = await axios.get(`https://openlibrary.org${book.key}.json`);
         const descData = response.data.description;
         
-        // OpenLibrary kadang nyimpen deskripsi dalam bentuk string langsung, kadang dalam object { value: '...' }
         if (typeof descData === 'string') {
           setDescription(descData);
         } else if (descData && descData.value) {
@@ -56,7 +53,6 @@ const DetailScreen = ({ route }) => {
     }
   };
 
-  // Fitur tambahan: Bagikan Buku
   const shareBook = async () => {
     try {
       await Share.share({

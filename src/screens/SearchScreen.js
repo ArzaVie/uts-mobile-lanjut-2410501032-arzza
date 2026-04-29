@@ -44,7 +44,6 @@ const SearchScreen = ({ navigation }) => {
       if (data.length === 0) {
         setErrorMsg('Buku tidak ditemukan.');
       } else {
-        // Kalau berhasil, tambahin ke recent searches (cegah duplikat)
         if (!recentSearches.includes(textToSearch)) {
           setRecentSearches([textToSearch, ...recentSearches].slice(0, 5)); // Simpan 5 history aja
         }
@@ -67,7 +66,6 @@ const SearchScreen = ({ navigation }) => {
     />
   );
 
-  // Kondisi buat nampilin section "Recent Searches"
   const showRecent = results.length === 0 && !loading && !errorMsg;
 
   return (
@@ -166,14 +164,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     margin: 16,
     borderRadius: 16,
-    elevation: 4, // Shadow buat Android
-    shadowColor: '#000', // Shadow buat iOS
+    elevation: 4,
+    shadowColor: '#000', 
     shadowOpacity: 0.08,
     shadowRadius: 15,
     shadowOffset: { width: 0, height: 4 },
   },
   searchCardExpanded: {
-    paddingBottom: 16, // Kasih ruang bawah pas Recent Searches muncul
+    paddingBottom: 16, 
   },
   searchInputRow: {
     flexDirection: 'row',

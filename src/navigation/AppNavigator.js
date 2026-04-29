@@ -72,7 +72,7 @@ const AppNavigator = () => {
           borderBottomColor: colors.border, 
         },
         headerTintColor: colors.primary, 
-        headerTitleAlign: 'center', // Bikin judul Tab Bar selalu di tengah
+        headerTitleAlign: 'center', 
         headerTitleStyle: {
           fontFamily: 'Jakarta-Bold',
           fontWeight: '700',

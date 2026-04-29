@@ -8,10 +8,8 @@ import { colors } from '../theme/colors';
 const AboutScreen = () => {
   const navigation = useNavigation();
   
-  // Ambil jumlah buku favorit betulan dari Zustand
   const totalFavorites = useFavoriteStore((state) => state.favorites.length);
 
-  // Fungsi buat menu dummy (Catatan & Highlight)
   const handleDummyPress = () => {
     Alert.alert("Fitur Segera Hadir", "Fitur Catatan & Highlight akan tersedia di versi berikutnya.");
   };

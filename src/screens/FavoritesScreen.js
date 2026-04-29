@@ -18,7 +18,6 @@ const FavoritesScreen = ({ navigation }) => {
   }
 
   const renderFavoriteItem = ({ item }) => (
-    // Panggil Reusable Component BookCard
     <BookCard 
       book={item} 
       onPress={() => navigation.navigate('Home', { screen: 'Detail', params: { book: item }})}
@@ -39,7 +38,7 @@ const FavoritesScreen = ({ navigation }) => {
         data={favorites}
         keyExtractor={(item) => item.key}
         renderItem={renderFavoriteItem}
-        numColumns={2} // Grid 2 kolom
+        numColumns={2} 
         contentContainerStyle={{ padding: 16 }}
         columnWrapperStyle={{ justifyContent: 'space-between' }}
       />
@@ -60,7 +59,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
-    marginTop: -2, // Biar nempel mulus sama bagian bawah card
+    marginTop: -2, 
   },
   deleteText: { color: '#FFF', fontSize: 12, fontWeight: 'bold' }
 });

@@ -9,10 +9,9 @@ import { colors } from '../theme/colors';
 import BookCard from '../components/BookCard';
 import { getTrendingBooks } from '../api/openLibraryClient';
 
-// Ambil ukuran layar biar ukuran card-nya presisi dibagi 2 kolom
 const numColumns = 2;
 const screenWidth = Dimensions.get('window').width;
-const cardWidth = (screenWidth - 48) / numColumns; // 48 dari padding kiri-kanan dan jarak antar card
+const cardWidth = (screenWidth - 48) / numColumns; 
 
 const HomeScreen = ({ navigation }) => {
   const [books, setBooks] = useState([]);
@@ -56,7 +55,7 @@ const HomeScreen = ({ navigation }) => {
         <Image 
           source={{ uri: coverUrl }} 
           style={styles.coverImage} 
-          resizeMode="cover" // Biar gambarnya proporsional memenuhi kotak
+          resizeMode="cover"
         />
         <View style={styles.cardContent}>
           <Text style={styles.title} numberOfLines={2}>
@@ -95,9 +94,9 @@ const HomeScreen = ({ navigation }) => {
         data={books}
         keyExtractor={(item) => item.key}
         renderItem={renderBookItem}
-        numColumns={numColumns} // Ini yang bikin layoutnya jadi grid 2 kolom
+        numColumns={numColumns} 
         contentContainerStyle={styles.listContainer}
-        columnWrapperStyle={styles.columnWrapper} // Biar jarak antar kolom seimbang
+        columnWrapperStyle={styles.columnWrapper}
         refreshControl={
           <RefreshControl 
             refreshing={refreshing} 
@@ -128,12 +127,12 @@ const styles = StyleSheet.create({
   },
   columnWrapper: {
     justifyContent: 'space-between',
-    marginBottom: 16, // Jarak baris atas dan bawah
+    marginBottom: 16, 
   },
   card: {
     backgroundColor: '#FFF',
     borderRadius: 12,
-    overflow: 'hidden', // Biar sudut gambar ikut melengkung ngikutin card
+    overflow: 'hidden', 
     elevation: 4, 
     shadowColor: '#000', 
     shadowOpacity: 0.1,
@@ -142,20 +141,20 @@ const styles = StyleSheet.create({
   },
   coverImage: {
     width: '100%',
-    height: 180, // Tinggi cover bukunya
-    backgroundColor: '#E2E8F0', // Warna background sementara pas gambar lagi loading
+    height: 180, 
+    backgroundColor: '#E2E8F0', 
   },
   cardContent: {
     padding: 12,
     borderTopWidth: 2,
-    borderTopColor: colors.accent, // Aksen garis Champagne Gold misahin gambar & teks
+    borderTopColor: colors.accent, 
   },
   title: {
     fontSize: 14,
     fontWeight: 'bold',
     color: colors.text,
     marginBottom: 4,
-    minHeight: 40, // Biar judul yang panjang/pendek tinggi card-nya tetep sama
+    minHeight: 40, 
   },
   author: {
     fontSize: 12,
